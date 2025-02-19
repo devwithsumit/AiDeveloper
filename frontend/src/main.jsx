@@ -6,9 +6,9 @@ import UserContextProvider from './context/UserContext.jsx'
 import 'remixicon/fonts/remixicon.css'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <UserContextProvider>
       <App />
     </UserContextProvider>
-  </StrictMode>,
+  // </StrictMode>,
 )
