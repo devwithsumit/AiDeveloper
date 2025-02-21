@@ -1,3 +1,4 @@
+import mongoose from "mongoose"
 import { projectModel } from "../models/project.model.js"
 
 
@@ -77,4 +78,28 @@ export const addUser = async ({ userId, users, projectId }) => {
     } catch (error) {
         throw error
     }
+}
+
+export const updateFileTree = async ({ projectId, fileTree }) => {
+    if (!projectId) {
+        throw new Error("projectId is required")
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        throw new Error("Invalid projectId")
+    }
+
+    if (!fileTree) {
+        throw new Error("fileTree is required")
+    }
+
+    const project = await projectModel.findOneAndUpdate({
+        _id: projectId
+    }, {
+        fileTree
+    }, {
+        new: true
+    })
+
+    return project;
 }

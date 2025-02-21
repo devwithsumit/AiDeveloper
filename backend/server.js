@@ -4,6 +4,8 @@ import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken'
 import { projectModel } from './models/project.model.js';
 import mongoose from 'mongoose';
+import { generateResult } from './services/ai.service.js';
+import UserModel from './models/user.model.js';
 const port = process.env.PORT || 3000;
 
 const server = http.createServer(app);
@@ -18,7 +20,7 @@ const io = new Server(server, {
 io.use(async (socket, next) => {
 
     try {
-        const token = socket.handshake.auth?.token || socket.handshake.headers.authorization?.split(' ')[1];
+        const token = socket.handshake.auth?.token || socket.handshake.headers?.authorization?.split(' ')[1];
         const projectId = socket.handshake.query?.projectId;
 
         if (!mongoose.Types.ObjectId.isValid(projectId)) {
@@ -45,11 +47,28 @@ io.use(async (socket, next) => {
 io.on('connection', socket => {
     console.log('A user connected 👽')
 
-    socket.join(socket.project._id);
+    socket.roomId = socket.project._id.toString();
+    socket.join(socket.roomId);
 
-    socket.on('project-message', (data) => {
-        const { message } = data
-        io.to(socket.project._id).emit('project-message', data);
+    socket.on('project-message', async (data) => {
+
+        let { message } = data;
+        
+        socket.broadcast.to(socket.roomId).emit('project-message', data);
+
+        if (message && message.includes("@ai")) {
+            message = message.replace("@ai", "");
+
+            const response = await generateResult(message);
+            io.to(socket.roomId).emit('project-message', {
+                message: response,
+                sender :{
+                    _id : 'ai',
+                    email : 'Ai'
+                }
+            })
+        }
+
     })
 
     socket.emit('request', /* … */); // emit an event to the socket

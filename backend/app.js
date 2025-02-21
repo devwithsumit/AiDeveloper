@@ -18,7 +18,8 @@ const app = express();
 
 //routes
 import userRoutes from './routes/user.routes.js';
-import projectRoutes from './routes/project.routes.js'
+import projectRoutes from './routes/project.routes.js';
+import aiRoutes from './routes/ai.routes.js'
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -27,6 +28,7 @@ app.use(morgan('dev'));
 
 app.use('/user', userRoutes);
 app.use('/project', projectRoutes);
+app.use('/ai', aiRoutes);
 
 
 export default app;

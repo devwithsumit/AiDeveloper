@@ -3,9 +3,10 @@ import UserModel from "../models/user.model.js";
 import RedisClient from "../services/redis.service.js";
 
 export const authUser = async (req, res, next) => {
-    const token = req.cookies.token || req.headers.authorization.split(' ')[1];
+    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
 
-    if (!token) {
+    if (!token || token == null) {
+        console.log('token in',token);
         res.status(400).json({ message: "Unauthorised access"});
     }
     const isBlacklisted = await RedisClient.get(token);

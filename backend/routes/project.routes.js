@@ -1,7 +1,7 @@
 import express from 'express';
 import { body } from 'express-validator';
 import { authUser } from '../middlewares/auth.js';
-import { addUser, createProject, getAllProjects, getProjectById } from '../controllers/project.controller.js';
+import { addUser, createProject, getAllProjects, getProjectById, updateFileTree } from '../controllers/project.controller.js';
 
 const router = express.Router();
 
@@ -25,5 +25,12 @@ router.put("/add-user", authUser, [
     body('users').isArray({ min: 1 }).withMessage('Users must be an array of strings').bail()
         .custom((users) => users.every(user => typeof user === 'string')).withMessage('Each user must be a string'),
 ], addUser)
+
+router.put('/update-file-tree',
+    authUser,
+    body('projectId').isString().withMessage('Project ID is required'),
+    body('fileTree').isObject().withMessage('File tree is required'),
+    updateFileTree
+)
 
 export default router;
