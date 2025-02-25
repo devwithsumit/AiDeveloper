@@ -42,7 +42,7 @@ const Home = () => {
                     <div onClick={()=>navigate('/project',{
                         state: project
                     })}
-                    className='px-6 border inline-block' key={project.name} >
+                    className='px-6 cursor-pointer hover:bg-gray-100 border inline-block' key={project.name} >
                         <h1 className='font-semibold text-lg'>{project.name}</h1>
                         <p><small>Collaboratos:</small> {project.users.length}</p>
                     </div>
